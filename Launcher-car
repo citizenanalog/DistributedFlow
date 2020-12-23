@@ -2,7 +2,6 @@
 
 
 cd $HOME/Desktop/DistributedCharge
-sudo ./canup
 python3.8 car.py 
 
 
