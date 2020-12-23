@@ -1,11 +1,9 @@
 ###############################################################################
 ###############################################################################
-#Copyright (c) 2020, Andy Schroder
+#Copyright (c) 2020, Matthew Sharpe
 #See the file README.md for licensing information.
 ###############################################################################
 ###############################################################################
-
-
 
 
 ################################################################
@@ -16,23 +14,15 @@ from time import sleep,time
 from datetime import datetime
 
 from lndgrpc import LNDClient
-from m3 import m3, getCANvalue
 from GUI import GUIThread as GUI
 from collections import deque
 
-import can,isotp,u3,helpers2,threading,sys
-
-
-
-
-
-
+import helpers2,threading,sys
 
 
 #want to change some values for some objects in imported modules, so couldn't use "from" when importing specific objects.
 #now, assign a shorter name to the specific objects of interest that will not be changed, but will be used frequently.
 
-Message=can.Message
 
 RoundAndPadToString=helpers2.RoundAndPadToString
 TimeStampedPrint=helpers2.TimeStampedPrint
@@ -48,39 +38,21 @@ TimeStampedPrint=helpers2.TimeStampedPrint
 
 helpers2.PrintWarningMessages=True
 
-SWCANname='can11'						#name of the interface for the single wire can bus, the charge port can bus.
-TWCANname='can12'						#name of the interface for the two wire can bus (standard can)
-
-
-
-
 LNDhost="127.0.0.1:10009"
 LNDnetwork='mainnet'						#'mainnet' or 'testnet'
-
-LabJackSerialNumber=111111111					#need to do this if have multiple LabJacks plugged into the same computer
-
-
 
 MaxRate=1.5			#sat/(W*hour)
 
 MaxRequiredPaymentAmount=41	#sat
 
-
-
-
-RelayON=False							#True for High ON logic, False for Low ON logic. (wall unit uses HIGH ON logic and car unit uses LOW ON logic for now)
-
 ################################################################
-
-
 
 
 
 ################################################################
 #initialize variables
 ################################################################
-
-SWCANActive=False
+#not sure if using Proximity yet
 Proximity=False
 
 
@@ -107,31 +79,15 @@ SmallStatus='Waiting For Charge Cable To Be Inserted'
 
 
 ################################################################
-#initialize the LabJack U3
+#initialize the Xmttr
 ################################################################
 
-try:	#don't error out if re-running the script in the same interpreter, just re-use the existing object
-	LabJack=u3.U3(firstFound=False,serial=LabJackSerialNumber)	#use a specific labjack and allow multiple to be plugged in at the same time.
+try:	
 except:
 	pass
-LabJack.getCalibrationData()			#don't know what this is for.
 
-LabJack.configIO(FIOAnalog = 15)		#is this making a permanent change and wearing out the non-volatile memory?
-
-LabJack.getFeedback(u3.BitDirWrite(4, 1))	# Set FIO4 to digital output
-
-RelayOFF=not RelayON				#always opposite of ON
-
-#default power on default for output direction is high. set FIO4 to whatever the relay off logic
-#requires (and actually reseting if RelayOFF==True just to keep.the logic simpler)
-#may be able to combine this into one line with the above setting of the output direction?
-#either way, right now, this seems to be quick enough that the coil doesn't have time to energize.
-#could use the python command that sets power on defaults in another one time run script/step,
-#but then that would require an setup step that modifies the device flash memory that would be better to avoid.
-LabJack.getFeedback(u3.BitStateWrite(4, RelayOFF))
 
 ################################################################
-
 
 
 ################################################################
@@ -141,34 +97,6 @@ LabJack.getFeedback(u3.BitStateWrite(4, RelayOFF))
 lnd = LNDClient(LNDhost, network=LNDnetwork, admin=True)
 
 ################################################################
-
-
-
-################################################################
-#initialize the CAN bus
-################################################################
-
-SWCAN = can.interface.Bus(channel=SWCANname, bustype='socketcan',can_filters=[	#only pickup IDs of interest so don't waste time processing tons of unused data
-										{"can_id": 0x3d2, "can_mask": 0x7ff, "extended": False},	#battery charge/discharge
-										{"can_id": 1998, "can_mask": 0x7ff, "extended": False},		#wall offer
-										{"can_id": 1999, "can_mask": 0x7ff, "extended": False},		#car acceptance of offer
-										{"can_id": m3.get_message_by_name('ID31CCC_chgStatus').frame_id, "can_mask": 0x7ff, "extended": False},
-										{"can_id": m3.get_message_by_name('ID32CCC_logData').frame_id, "can_mask": 0x7ff, "extended": False},
-										])
-
-
-
-TWCAN = can.interface.Bus(channel=TWCANname, bustype='socketcan',can_filters=[
-										{"can_id": 0x3d2, "can_mask": 0x7ff, "extended": False},	#battery charge/discharge
-										{"can_id": 1990, "can_mask": 0x7ff, "extended": False},
-										{"can_id": m3.get_message_by_name('ID21DCP_evseStatus').frame_id, "can_mask": 0x7ff, "extended": False},
-										{"can_id": m3.get_message_by_name('ID31CCC_chgStatus').frame_id, "can_mask": 0x7ff, "extended": False},
-										{"can_id": m3.get_message_by_name('ID32CCC_logData').frame_id, "can_mask": 0x7ff, "extended": False},
-										])
-
-
-################################################################
-
 
 
 ################################################################
