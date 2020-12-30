@@ -103,7 +103,7 @@ try:
 		GUI.BigStatus=BigStatus
 		GUI.SmallStatus=SmallStatus
 		GUI.FlowDelivered=FlowDelivered
-		GUI.EnergyPaidFor=FlowPaidFor  #change this GUI.EnergyPaidFor to FlowPaidFor
+		GUI.FlowPaidFor=FlowPaidFor
 		GUI.CurrentRate=CurrentRate
 		GUI.RequiredPaymentAmount=RequiredPaymentAmount
 		GUI.FlowStartTime=FlowStartTime
