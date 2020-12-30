@@ -40,8 +40,8 @@ helpers2.PrintWarningMessages=True
 LNDhost="127.0.0.1:10009"
 LNDnetwork='mainnet'						#'mainnet' or 'testnet'
 
-CurrentRate=1							#sat/(FlowUnit)  // e.g. kg/min, lb/min, ect...
-FlowUnitPerPayment=int(25)					#mass flow unit/payment
+CurrentRate=1							#sat/(FlowUnit)  // e.g. FlowUnit can be kg/min, lb/min, ect...
+FlowUnitPerPayment=int(1000)					#set the mass flow unit/payment (1000 kg?)
 RequiredPaymentAmount=int(FlowUnitPerPayment*CurrentRate)		#sat/payment 
 
 ################################################################
@@ -108,7 +108,7 @@ try:
 		GUI.RequiredPaymentAmount=RequiredPaymentAmount
 		GUI.FlowStartTime=FlowStartTime
 		GUI.Proximity=Proximity
-		GUI.MaxAmps=MaxAmps
+		GUI.MaxAmps=MaxAmps # not using this
 
 
 		if GUI._stop_event.is_set():
