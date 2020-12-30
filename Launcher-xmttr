@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+cd $HOME/Desktop/DistributedFlow
+python3.8 xmttr.py 
+
+
