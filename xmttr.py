@@ -106,7 +106,7 @@ try:
 		GUI.EnergyPaidFor=FlowPaidFor  #change this GUI.EnergyPaidFor to FlowPaidFor
 		GUI.CurrentRate=CurrentRate
 		GUI.RequiredPaymentAmount=RequiredPaymentAmount
-		GUI.ChargeStartTime=ChargeStartTime
+		GUI.FlowStartTime=FlowStartTime
 		GUI.Proximity=Proximity
 		GUI.MaxAmps=MaxAmps
 
@@ -201,7 +201,7 @@ try:
 
 			if PowerKilled:
 				BigStatus='Stopped Charging'
-				ChargeStartTime=-1		#makes stop counting charge time even through there is still proximity
+				FlowStartTime=-1		#makes stop counting charge time even through there is still proximity
 
 			else:
 
@@ -271,7 +271,7 @@ try:
 						OfferAccepted=True
 						TimeStampedPrint("buyer accepted rate")
 
-						ChargeStartTime=datetime.now()
+						FlowStartTime=datetime.now()
 
 						BigStatus='Charging'
 						SmallStatus='Sale Terms Accepted'
