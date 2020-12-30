@@ -40,9 +40,9 @@ helpers2.PrintWarningMessages=True
 LNDhost="127.0.0.1:10009"
 LNDnetwork='mainnet'						#'mainnet' or 'testnet'
 
-CurrentRate=1							#sat/(W*hour) // change this to sat/lb, sat/kg
-WhoursPerPayment=int(25)					#W*hour/payment // use units above
-RequiredPaymentAmount=int(WhoursPerPayment*CurrentRate)		#sat/payment 
+CurrentRate=1							#sat/(FlowUnit)  // e.g. kg/min, lb/min, ect...
+FlowUnitPerPayment=int(25)					#mass flow unit/payment
+RequiredPaymentAmount=int(FlowUnitPerPayment*CurrentRate)		#sat/payment 
 
 ################################################################
 
@@ -225,7 +225,7 @@ try:
 								PendingInvoice=False
 								InitialInvoice=False							#reset every time just to make the logic simpler
 
-								TimeStampedPrint('WhoursDelivered: '+RoundAndPadToString(FlowDelivered,1)+',   Volts: '+RoundAndPadToString(Volts,2)+',   Amps: '+RoundAndPadToString(Amps,2))
+								TimeStampedPrint('FlowUnitDelivered: '+RoundAndPadToString(FlowDelivered,1)+',   Volts: '+RoundAndPadToString(Volts,2)+',   Amps: '+RoundAndPadToString(Amps,2))
 								TimeStampedPrint("payment received, time since last payment received="+str(time()-LastPaymentReceivedTime)+"s")
 
 								LastPaymentReceivedTime=time()
@@ -243,7 +243,7 @@ try:
 						#the total error may be larger than an individual payment amount, so EnergyPaidFor-EnergyDelivered is likely less than 0 and therefor
 						#a new invoice will just be sent right after the previous invoice was paid, rather than waiting.
 						if ((FlowPaidFor-FlowDelivered)<RequiredPaymentAmount*0.90) and not PendingInvoice:
-							RequiredPaymentAmount=WhoursPerPayment*CurrentRate				#sat
+							RequiredPaymentAmount=FlowUnitPerPayment*CurrentRate				#sat
 
 							OutstandingInvoice=lnd.add_invoice(RequiredPaymentAmount)
 
@@ -295,9 +295,9 @@ try:
 						#provide the offer
 
 #need to do a try except here, because the buyer may not be listening properly
-						SWCAN.send(Message(arbitration_id=1998,data=int(WhoursPerPayment).to_bytes(4, byteorder='little')+int(RequiredPaymentAmount).to_bytes(4, byteorder='little'),is_extended_id=False))
+						SWCAN.send(Message(arbitration_id=1998,data=int(FlowUnitPerPayment).to_bytes(4, byteorder='little')+int(RequiredPaymentAmount).to_bytes(4, byteorder='little'),is_extended_id=False))
 						TimeLastOfferSent=time()
-						TimeStampedPrint("provided an offer of "+RoundAndPadToString(WhoursPerPayment,1)+" W*hour for a payment of "+str(RequiredPaymentAmount)+" satoshis ["+RoundAndPadToString(CurrentRate,1)+" satoshis/(W*hour)]")
+						TimeStampedPrint("provided an offer of "+RoundAndPadToString(FlowUnitPerPayment,1)+" W*hour for a payment of "+str(RequiredPaymentAmount)+" satoshis ["+RoundAndPadToString(CurrentRate,1)+" satoshis/(W*hour)]")
 						SmallStatus='Provided An Offer'
 						#SmallStatus='Sale Terms Offered To Vehicle'
 
@@ -307,12 +307,12 @@ try:
 						#buyer must pay ahead 20% for all payments but the first payment (must pay after 80% has been delivered).
 						#also allow 1% error due to measurement error as well as transmission losses between the car and the wall unit.
 						#this error basically needs to be taken into consideration when setting the sale rate.
-						(((FlowPaidFor-FlowDelivered*0.99)<WhoursPerPayment*0.20)	and not	InitialInvoice)
+						(((FlowPaidFor-FlowDelivered*0.99)<FlowUnitPerPayment*0.20)	and not	InitialInvoice)
 
 							or
 
 						#buyer can go into debt 30% before the first payment, also allowing for 1% error as above, although that may be really needed for the first payment.
-						(((FlowPaidFor-FlowDelivered*0.99)<-WhoursPerPayment*0.30)	and	InitialInvoice)
+						(((FlowPaidFor-FlowDelivered*0.99)<-FlowUnitPerPayment*0.30)	and	InitialInvoice)
 					):
 
 					TimeStampedPrint("buyer never paid, need to kill power")
