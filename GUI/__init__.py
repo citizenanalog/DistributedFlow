@@ -40,11 +40,11 @@ class GUIClass(threading.Thread):
 		self.Amps=0
 		self.BigStatus=''
 		self.SmallStatus=''
-		self.EnergyDelivered=0
-		self.EnergyPaidFor=0
+		self.FlowDelivered=0
+		self.FlowPaidFor=0
 		self.CurrentRate=0
 		self.RequiredPaymentAmount=0
-		self.ChargeStartTime=-1
+		self.FlowStartTime=-1
 		self.Proximity=0
 		self.MaxAmps=0
 
@@ -205,17 +205,17 @@ class GUIClass(threading.Thread):
 
 
 
-			if self.ChargeStartTime !=-1 and self.Proximity is True:
-				ChargeTimeText=FormatTimeDeltaToPaddedString(timedelta(seconds=round((datetime.now()-self.ChargeStartTime).total_seconds())))	#round to the nearest second, then format as a zero padded string
+			if self.FlowStartTime !=-1 and self.Proximity is True:
+				ChargeTimeText=FormatTimeDeltaToPaddedString(timedelta(seconds=round((datetime.now()-self.FlowStartTime).total_seconds())))	#round to the nearest second, then format as a zero padded string
 
 			OperatingConditionsText=(
 					'Power:            '+RoundAndPadToString(PowerPrint/1000.,DecimalPlaces=1,LeftPad=6)+' kW\n'+
 					'Current:          '+RoundAndPadToString(AmpsPrint,DecimalPlaces=1,LeftPad=6)+' Amps  RMS\n'+
 					'Line Voltage:     '+RoundAndPadToString(VoltsPrint,DecimalPlaces=1,LeftPad=6)+  ' Volts RMS\n'+
 					'\n'+
-					'Energy Delivered: '+RoundAndPadToString(self.EnergyDelivered,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
-					'Energy Paid For:  '+RoundAndPadToString(self.EnergyPaidFor,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
-					'Payments:         '+RoundAndPadToString(self.EnergyPaidFor*self.CurrentRate,DecimalPlaces=1,LeftPad=6)+' sat\n'+
+					'Energy Delivered: '+RoundAndPadToString(self.FlowDelivered,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
+					'Energy Paid For:  '+RoundAndPadToString(self.FlowPaidFor,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
+					'Payments:         '+RoundAndPadToString(self.FlowPaidFor*self.CurrentRate,DecimalPlaces=1,LeftPad=6)+' sat\n'+
 					'Charging Time:     '+' '+ChargeTimeText+''
 				)
 
