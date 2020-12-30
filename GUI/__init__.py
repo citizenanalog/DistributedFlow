@@ -1,6 +1,6 @@
 ###############################################################################
 ###############################################################################
-#Copyright (c) 2020, Andy Schroder
+#Copyright (c) 2020, citizenanalog
 #See the file README.md for licensing information.
 ###############################################################################
 ###############################################################################
@@ -110,10 +110,10 @@ class GUIClass(threading.Thread):
 		BTCimage.pack(side="top",padx=(10,0),pady=10, anchor="nw")
 
 
-		Header=Label(RightFrame, background='white',text='Distributed Charge',font=('Courier', 80, "bold"))
+		Header=Label(RightFrame, background='white',text='Distributed Flow',font=('Courier', 80, "bold"))
 		Header.pack(anchor='center',pady=(35,20))
 
-		SmallHeader=Label(RightFrame, background='white',text='~ Electric Vehicle Charging Using Bitcoin Micropayments Over The Lightning Network ~',font=('Helvetica', 20, "bold"))
+		SmallHeader=Label(RightFrame, background='white',text='~ Real-Time Flowmeter Using Bitcoin Micropayments Over The Lightning Network ~',font=('Helvetica', 20, "bold"))
 		SmallHeader.pack(anchor='center',pady=10)
 
 
@@ -135,7 +135,6 @@ class GUIClass(threading.Thread):
 		UnitSpecifications.pack(side='left',anchor='s',padx=(40,0))
 
 
-
 		OperatingConditionsv = StringVar()
 		OperatingConditions=Label(MiddleFrame,textvariable=OperatingConditionsv,font=('Courier', 30),justify='left', background='white')#'red')
 		OperatingConditions.pack(side='right',anchor='s',padx=(0,40))
@@ -144,19 +143,15 @@ class GUIClass(threading.Thread):
 		Frame(BottomFrame,background='black').pack(side="top",anchor='n',fill='x')	#horizontal line
 
 
-		WebsiteText=Label(BottomFrame,background='white',text='http://AndySchroder.com/DistributedCharge/',font=('Courier', 20))
+		WebsiteText=Label(BottomFrame,background='white',text='https://github.com/citizenanalog/DistributedFlow',font=('Courier', 20))
 		WebsiteText.pack(side="left", anchor="sw",padx=10,pady=10)
 
-		AUSimage=ImageTk.PhotoImage(Image.open(os.path.join(os.path.dirname(__file__), "A.U.S-small.png")))
-		AUS = Label(BottomFrame, image = AUSimage,borderwidth=0)
-		AUS.pack(side="right", anchor="se",padx=10,pady=10)
+		#AUSimage=ImageTk.PhotoImage(Image.open(os.path.join(os.path.dirname(__file__), "A.U.S-small.png")))
+		#AUS = Label(BottomFrame, image = AUSimage,borderwidth=0)
+		#AUS.pack(side="right", anchor="se",padx=10,pady=10)
 
 
-
-
-
-
-		ChargeTimeText=FormatTimeDeltaToPaddedString(timedelta(seconds=0))
+		FlowTimeText=FormatTimeDeltaToPaddedString(timedelta(seconds=0))
 
 		while True:
 
@@ -206,17 +201,17 @@ class GUIClass(threading.Thread):
 
 
 			if self.FlowStartTime !=-1 and self.Proximity is True:
-				ChargeTimeText=FormatTimeDeltaToPaddedString(timedelta(seconds=round((datetime.now()-self.FlowStartTime).total_seconds())))	#round to the nearest second, then format as a zero padded string
+				FlowTimeText=FormatTimeDeltaToPaddedString(timedelta(seconds=round((datetime.now()-self.FlowStartTime).total_seconds())))	#round to the nearest second, then format as a zero padded string
 
 			OperatingConditionsText=(
 					'Power:            '+RoundAndPadToString(PowerPrint/1000.,DecimalPlaces=1,LeftPad=6)+' kW\n'+
 					'Current:          '+RoundAndPadToString(AmpsPrint,DecimalPlaces=1,LeftPad=6)+' Amps  RMS\n'+
 					'Line Voltage:     '+RoundAndPadToString(VoltsPrint,DecimalPlaces=1,LeftPad=6)+  ' Volts RMS\n'+
 					'\n'+
-					'Energy Delivered: '+RoundAndPadToString(self.FlowDelivered,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
-					'Energy Paid For:  '+RoundAndPadToString(self.FlowPaidFor,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
+					'Flow Delivered: '+RoundAndPadToString(self.FlowDelivered,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
+					'Flow Paid For:  '+RoundAndPadToString(self.FlowPaidFor,DecimalPlaces=1,LeftPad=6)+' W*hour\n'+
 					'Payments:         '+RoundAndPadToString(self.FlowPaidFor*self.CurrentRate,DecimalPlaces=1,LeftPad=6)+' sat\n'+
-					'Charging Time:     '+' '+ChargeTimeText+''
+					'Charging Time:     '+' '+FlowTimeText+''
 				)
 
 			OperatingConditionsv.set(OperatingConditionsText)
