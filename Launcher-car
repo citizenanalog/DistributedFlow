@@ -1,7 +1,0 @@
-#!/bin/bash
-
-
-cd $HOME/Desktop/DistributedCharge
-python3.8 car.py 
-
-
