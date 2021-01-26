@@ -5,9 +5,6 @@
 ###############################################################################
 ###############################################################################
 
-
-
-
 ################################################################
 #import modules
 ################################################################
@@ -37,8 +34,8 @@ TimeStampedPrint=helpers2.TimeStampedPrint
 
 helpers2.PrintWarningMessages=True
 
-LNDhost="127.0.0.1:10009"
-LNDnetwork='mainnet'						#'mainnet' or 'testnet'
+LNDhost="127.0.0.1:10001"					#'alice' in simnet
+LNDnetwork='testnet'						#'mainnet' or 'testnet'
 
 CurrentRate=1							#sat/(FlowUnit)  // e.g. FlowUnit can be kg/min, lb/min, ect...
 FlowUnitPerPayment=int(1000)					#set the mass flow unit/payment (1000 kg?)
@@ -62,9 +59,6 @@ BigStatus='Insert Charge Cable Into Car'
 SmallStatus='Waiting For Charge Cable To Be Inserted'
 
 ################################################################
-
-
-################################################################
 #initialize the LND RPC
 ################################################################
 
@@ -72,26 +66,9 @@ lnd = LNDClient(LNDhost, network=LNDnetwork, admin=True)
 
 ################################################################
 
-
-
-
-
-################################################################
-
-
-################################################################
-
 GUI.start()			#starts .run() (and maybe some other stuff?)
 
 ################################################################
-
-
-
-
-################################################################
-
-
-
 
 try:
 
