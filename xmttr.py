@@ -55,8 +55,8 @@ TimeLastOfferSent=time()
 FlowDelivered=0
 FlowPaidFor=0
 
-BigStatus='Insert Charge Cable Into Car'
-SmallStatus='Waiting For Charge Cable To Be Inserted'
+BigStatus='Do something to start transaction'
+SmallStatus='Waiting something to happen'
 
 ################################################################
 #initialize the LND RPC
@@ -91,6 +91,9 @@ try:
 		if GUI._stop_event.is_set():
 			sys.exit()
 
+#########################
+
+#prob don't need this section, not using proximity
 
 		#not sure how to make ChargeNow perpetual, so just add an hour on every loop
 
@@ -168,13 +171,13 @@ try:
 
 		Volts=WallUnit.voltsPhaseA
 		Amps=WallUnit.reportedAmpsActual
-
-
+#end proximity section
+##############################
 
 
 		if Proximity:
 
-			message = SWCAN.recv(timeout=.075)
+			message = SWCAN.recv(timeout=.075)  #get message from X not CAN
 
 			if PowerKilled:
 				BigStatus='Stopped Charging'
@@ -250,7 +253,7 @@ try:
 
 						FlowStartTime=datetime.now()
 
-						BigStatus='Charging'
+						BigStatus='Dispensing'
 						SmallStatus='Sale Terms Accepted'
 
 						FirstRequiredPaymentAmount=1*RequiredPaymentAmount				#sat, adjust multiplier if desire the first payment to be higher than regular payments.
@@ -294,7 +297,7 @@ try:
 
 					TimeStampedPrint("buyer never paid, need to kill power")
 					PowerKilled=True
-					TWCManager.master.sendStopCommand()					#need to refine this statement if have multiple wall units.
+					#set output relay to OFF to stop flow 
 					SmallStatus='Vehicle Did Not Make Payment'
 
 
@@ -311,8 +314,6 @@ try:
 
 except (KeyboardInterrupt, SystemExit):
 
-	TWCManager.MainThread.stop()
-	TWCManager.MainThread.join()
 	GUI.stop()
 	GUI.join()	#for some reason if this is not used, python tries too quit before the stop command is received by the thread and it gracefully shutdown and then it takes longer for tk to timeout and close the interpreter?
 
